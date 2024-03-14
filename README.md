@@ -1,4 +1,4 @@
-# :mag: | Windows-Cache-Cleaner 
+# 🧹 | Windows-Cache-Cleaner 
 This PowerShell script is designed to automate various system maintenance tasks on Windows. It performs the following operations:
 
 1. **Check Administrator Privileges**: Checks if the script is being run with administrative privileges. If not, it restarts the script with elevated privileges.
