@@ -34,7 +34,7 @@ This PowerShell script is designed to automate various system maintenance tasks 
 
 ## Requirements
 
-- Windows PowerShell
+- Windows PowerShell 5.1 or higher
 - Administrative privileges
 - `PSWindowsUpdate` module (automatically installed by the script if not present)
 - `winget` package manager (optional, for application updates)
