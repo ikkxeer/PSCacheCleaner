@@ -1,4 +1,6 @@
-﻿Clear-Host # Limpiar ventana al iniciar
+$Version = 2.4
+
+Clear-Host # Limpiar ventana al iniciar
 
 # Elevación a Administrador
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
@@ -60,7 +62,7 @@ $Software_Distribution = 'C:\Windows\SoftwareDistribution'
 $Directorio_Temporal = [System.IO.Path]::GetTempPath()
 $Directorio_Temporal2 = 'C:\Windows\Temp'
 $Printers_Temp = 'C:\Windows\System32\spool\PRINTERS'
-$Nvidia_Temp = 'C:\Users\' + $Usuario + '\AppData\LocalLow\NVIDIA\PerDriverVersion\DXCache'
+$Nvidia_Temp = "C:\Users\" + $Usuario + "\AppData\LocalLow\NVIDIA\PerDriverVersion\DXCache"
 $Chrome_Temp1 = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache\*"
 $Chrome_Temp2 = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries\*"
 $Chrome_Temp3 = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies"
@@ -74,17 +76,23 @@ $Mozilla_Firefox_Temp5 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\
 $Mozilla_Firefox_Temp6 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\webappsstore.sqlite"
 $Mozilla_Firefox_Temp7 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\chromeappsstore.sqlite"
 $Mozilla_Firefox_Temp8 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\chromeappsstore.sqlite"
-$Discord_Temp1 = "C:\Users " + $Usuario + "AppData\Roaming\discord\Code Cache"
-$Discord_Temp2 = "C:\Users " + $Usuario + "AppData\Roaming\discord\Cache"
-$Discord_Temp3 = "C:\Users " + $Usuario + "AppData\Roaming\discord\GPUCache"
+$Discord_Temp1 = "C:\Users\" + $Usuario + "AppData\Roaming\discord\Code Cache"
+$Discord_Temp2 = "C:\Users\" + $Usuario + "AppData\Roaming\discord\Cache"
+$Discord_Temp3 = "C:\Users\" + $Usuario + "AppData\Roaming\discord\GPUCache"
 $Spotify_Temp = "$env:LOCALAPPDATA\Spotify\Storage"
 $Edge_Temp = "$env:LOCALAPPDATA\Packages\Microsoft.MicrosoftEdge*\AC\MicrosoftEdge\Cache\*"
 $Outlook_Temp = "$env:LOCALAPPDATA\Microsoft\Outlook\RoamCache"
 $Epic_Games_Temp1 = "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache"
 $Epic_Games_Temp2 = "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache_4147"
 $Epic_Games_Temp3 = "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache_4430"
-$Adobe_Premiere_Pro_Temp = "C:\Users\' + $Usuario + '\AppData\Roaming\Adobe\Common\Media Cache Files"
-
+$Adobe_Premiere_Pro_Temp = "C:\Users\$Usuario\AppData\Roaming\Adobe\Common\Media Cache Files"
+$Photoshop_Logs_Temp = "C:\Users\$Usuario\AppData\Roaming\Adobe\Adobe Photoshop*\Logs"
+$Opera_Temp1 = "C:\Users\" + $Usuario +"\AppData\Roaming\Opera Software\Opera Stable"
+$Opera_Temp2 = "$env:LOCALAPPDATA\Opera Software\Opera Stable\Default\Cache\Cache_Data"
+$Net_Temp = "$env:LOCALAPPDATA\\Microsoft\Windows\INetCache"
+$SystemRoot_Temp = "C:\Windows\Temp"
+$WindowsUpdate_Downloads_Temp = "C:\Windows\SoftwareDistribution\Download"
+$CrashDump_Temp = "$env:LOCALAPPDATA\CrashDumps"
 
 # Función para contar archivos eliminados
 function LimpiarDirectorio ($ruta) {
@@ -147,6 +155,38 @@ else {
 $Exists = Test-Path -Path $Directorio_Temporal
 if ($Exists) {
     LimpiarDirectorio $Directorio_Temporal
+}
+else {
+}
+
+# Crash Dump Temp
+$Exists = Test-Path -Path $CrashDump_Temp
+if ($Exists) {
+    LimpiarDirectorio $CrashDump_Temp
+}
+else {
+}
+
+# System Root Temp
+$Exists = Test-Path -Path $SystemRoot_Temp
+if ($Exists) {
+    LimpiarDirectorio $SystemRoot_Temp
+}
+else {
+}
+
+# Net Temp
+$Exists = Test-Path -Path $Net_Temp
+if ($Exists) {
+    LimpiarDirectorio $Net_Temp
+}
+else {
+}
+
+# Windows Update Downloads Temp
+$Exists = Test-Path -Path $WindowsUpdate_Downloads_Temp
+if ($Exists) {
+    LimpiarDirectorio $WindowsUpdate_Downloads_Temp
 }
 else {
 }
@@ -216,6 +256,21 @@ if ($EpicGamesIsInstalled) {
 else {
 }
 
+# Opera
+$EpicGamesIsInstalled = Get-Package "Opera*" -ErrorAction SilentlyContinue
+$Exists1 = Test-Path -Path $Opera_Temp1
+$Exists2 = Test-Path -Path $Opera_Temp2
+if ($EpicGamesIsInstalled) {
+    if ($Exists1) {
+        LimpiarDirectorio $Opera_Temp1
+    }
+    if ($Exists2) {
+        LimpiarDirectorio $Opera_Temp2
+    }
+}
+else {
+}
+
 # Outlook
 $Exists = Test-Path -Path $Outlook_Temp
 if ($Exists) {
@@ -255,6 +310,22 @@ else {
 $Exists = Test-Path -Path $Adobe_Premiere_Pro_Temp
 if ($Exists) {
     LimpiarDirectorio $Adobe_Premiere_Pro_Temp
+}
+else {
+}
+
+# Adobe Premiere Pro
+$Exists = Test-Path -Path $Photoshop_Logs_Temp
+if ($Exists) {
+    LimpiarDirectorio $Photoshop_Logs_Temp
+}
+else {
+}
+
+# Adobe Ilustrator
+$Exists = Test-Path -Path $Photoshop_Logs_Temp
+if ($Exists) {
+    LimpiarDirectorio $Photoshop_Logs_Temp
 }
 else {
 }
