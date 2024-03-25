@@ -1,4 +1,7 @@
-# 🧹 | Windows-Cache-Cleaner & Update-Optimize
+<div align="center">
+  <img src="https://github.com/ikkxeer/PSCacheCleaner/assets/137718457/6147b6df-2197-4296-b33e-e1b06fdef196" alt="PSCacheCleaner Logo">
+</div>
+<h1 align="center">Windows-Cache-Cleaner & Update-Optimize</h1>
 This PowerShell script automates the cleaning and optimization of your Windows system. It performs various tasks including disk optimization, temporary file deletion, cache clearing, and updating applications and Windows.
 
 ## Version
