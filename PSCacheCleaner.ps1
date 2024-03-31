@@ -437,7 +437,7 @@ Write-Host "Se ha comenzado a actualizar las aplicaciones de Microsoft Store!" -
 Write-Host " "
 
 # Vaciar Papelera de reciclaje
-$DecisionPapelera = "Quieres vaciar la papelera de reciclaje? (Y/N)"
+$DecisionPapelera = Read-Host "Quieres vaciar la papelera de reciclaje? (Y/N)"
 Write-Host " "
 
 if ($DecisionPapelera.ToLower() -eq "y") {
@@ -500,7 +500,3 @@ else {
     Write-Host "Opción inválida..." -ForegroundColor Red
     Write-host " "
 }
-
-
-Pause
-Clear-Host
