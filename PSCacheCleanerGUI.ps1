@@ -19,7 +19,6 @@ $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedDialog
 $form.MaximizeBox = $false
 $form.Icon = $icon
 
-# Create MenuStrip
 $menuStrip = New-Object System.Windows.Forms.MenuStrip
 $menuStrip.BackColor = [System.Drawing.Color]::Purple
 $menuStrip.ForeColor = [System.Drawing.Color]::White
@@ -47,7 +46,6 @@ $fileMenu.DropDownItems.Add($saveMenuItem)
 $fileMenu.DropDownItems.Add($closeMenuItem)
 $menuStrip.Items.Add($fileMenu)
 
-# Add MenuStrip to the form
 $form.MainMenuStrip = $menuStrip
 $form.Controls.Add($menuStrip)
 
@@ -56,7 +54,6 @@ $panel.Dock = [System.Windows.Forms.DockStyle]::Fill
 $panel.BackColor = [System.Drawing.Color]::LightGray
 $form.Controls.Add($panel)
 
-# Add Start Process Button
 $btnStart = New-Object System.Windows.Forms.Button
 $btnStart.Text = "Start Process"
 $btnStart.Width = 200
@@ -68,7 +65,6 @@ $btnStart.Font = New-Object System.Drawing.Font("Segoe UI", 12, [System.Drawing.
 $btnStart.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $panel.Controls.Add($btnStart)
 
-# Add Exit Button
 $btnExit = New-Object System.Windows.Forms.Button
 $btnExit.Text = "Exit"
 $btnExit.Width = 200
@@ -81,7 +77,6 @@ $btnExit.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $btnExit.Enabled = $false
 $panel.Controls.Add($btnExit)
 
-# Add Output TextBox
 $txtOutput = New-Object System.Windows.Forms.TextBox
 $txtOutput.Multiline = $true
 $txtOutput.Dock = [System.Windows.Forms.DockStyle]::Bottom
