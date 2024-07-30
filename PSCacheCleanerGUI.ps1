@@ -165,6 +165,8 @@ function CleanUp {
         }
     }
 
+    $Usuario = $Env:USERNAME
+
     $directories = @(
         'C:\Windows\Prefetch',
         'C:\Windows\SoftwareDistribution',
