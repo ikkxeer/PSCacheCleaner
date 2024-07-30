@@ -13,7 +13,7 @@ $icon = [System.Drawing.Icon]::FromHandle($iconHandle)
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "PSCacheCleaner - User Interface"
 $form.Width = 1000
-$form.Height = 700
+$form.Height = 700 
 $form.StartPosition = "CenterScreen"
 $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedDialog
 $form.MaximizeBox = $false
@@ -171,12 +171,37 @@ function CleanUp {
         [System.IO.Path]::GetTempPath(),
         'C:\Windows\Temp',
         'C:\Windows\System32\spool\PRINTERS',
-        "C:\Users\$Env:USERNAME\AppData\LocalLow\NVIDIA\PerDriverVersion\DXCache",
+        "C:\Users\" + $Usuario + "\AppData\LocalLow\NVIDIA\PerDriverVersion\DXCache",
         "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache\*",
         "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries\*",
         "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies",
         "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Media Cache",
-        "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies-Journal"
+        "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies-Journal",
+        "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cache\*",
+        "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cache\*.*",
+        "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cache2\entries\*.*",
+        "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\thumbnails\*",
+        "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cookies.sqlite",
+        "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\webappsstore.sqlite",
+        "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\chromeappsstore.sqlite",
+        "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\chromeappsstore.sqlite",
+        "C:\Users\" + $Usuario + "AppData\Roaming\discord\Code Cache",
+        "C:\Users\" + $Usuario + "AppData\Roaming\discord\Cache",
+        "C:\Users\" + $Usuario + "AppData\Roaming\discord\GPUCache",
+        "$env:LOCALAPPDATA\Spotify\Storage",
+        "$env:LOCALAPPDATA\Packages\Microsoft.MicrosoftEdge*\AC\MicrosoftEdge\Cache\*",
+        "$env:LOCALAPPDATA\Microsoft\Outlook\RoamCache",
+        "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache",
+        "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache_4147",
+        "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache_4430",
+        "C:\Users\$Usuario\AppData\Roaming\Adobe\Common\Media Cache Files",
+        "C:\Users\$Usuario\AppData\Roaming\Adobe\Adobe Photoshop*\Logs",
+        "C:\Users\" + $Usuario +"\AppData\Roaming\Opera Software\Opera Stable",
+        "$env:LOCALAPPDATA\Opera Software\Opera Stable\Default\Cache\Cache_Data",
+        "$env:LOCALAPPDATA\\Microsoft\Windows\INetCache",
+        "C:\Windows\Temp",
+        "C:\Windows\SoftwareDistribution\Download",
+        "$env:LOCALAPPDATA\CrashDumps"
     )
 
     $directories | ForEach-Object { if (Test-Path -Path $_) { LimpiarDirectorio $_ } }
