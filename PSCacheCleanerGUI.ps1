@@ -13,7 +13,7 @@ $icon = [System.Drawing.Icon]::FromHandle($iconHandle)
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "PSCacheCleaner - User Interface"
 $form.Width = 1000
-$form.Height = 700
+$form.Height = 700 
 $form.StartPosition = "CenterScreen"
 $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedDialog
 $form.MaximizeBox = $false
@@ -166,17 +166,42 @@ function CleanUp {
     }
 
     $directories = @(
-        'C:\Windows\Prefetch',
-        'C:\Windows\SoftwareDistribution',
-        [System.IO.Path]::GetTempPath(),
-        'C:\Windows\Temp',
-        'C:\Windows\System32\spool\PRINTERS',
-        "C:\Users\$Env:USERNAME\AppData\LocalLow\NVIDIA\PerDriverVersion\DXCache",
-        "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache\*",
-        "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries\*",
-        "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies",
-        "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Media Cache",
-        "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies-Journal"
+        $Prefetch_Path = 'C:\Windows\Prefetch',
+        $Software_Distribution = 'C:\Windows\SoftwareDistribution',
+        $Directorio_Temporal = [System.IO.Path]::GetTempPath(),
+        $Directorio_Temporal2 = 'C:\Windows\Temp',
+        $Printers_Temp = 'C:\Windows\System32\spool\PRINTERS',
+        $Nvidia_Temp = "C:\Users\" + $Usuario + "\AppData\LocalLow\NVIDIA\PerDriverVersion\DXCache",
+        $Chrome_Temp1 = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache\*",
+        $Chrome_Temp2 = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries\*",
+        $Chrome_Temp3 = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies",
+        $Chrome_Temp4 = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Media Cache",
+        $Chrome_Temp5 =  "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies-Journal",
+        $Mozilla_Firefox_Temp1 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cache\*",
+        $Mozilla_Firefox_Temp2 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cache\*.*",
+        $Mozilla_Firefox_Temp3 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cache2\entries\*.*",
+        $Mozilla_Firefox_Temp4 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\thumbnails\*",
+        $Mozilla_Firefox_Temp5 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cookies.sqlite",
+        $Mozilla_Firefox_Temp6 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\webappsstore.sqlite",
+        $Mozilla_Firefox_Temp7 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\chromeappsstore.sqlite",
+        $Mozilla_Firefox_Temp8 = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\chromeappsstore.sqlite",
+        $Discord_Temp1 = "C:\Users\" + $Usuario + "AppData\Roaming\discord\Code Cache",
+        $Discord_Temp2 = "C:\Users\" + $Usuario + "AppData\Roaming\discord\Cache",
+        $Discord_Temp3 = "C:\Users\" + $Usuario + "AppData\Roaming\discord\GPUCache",
+        $Spotify_Temp = "$env:LOCALAPPDATA\Spotify\Storage",
+        $Edge_Temp = "$env:LOCALAPPDATA\Packages\Microsoft.MicrosoftEdge*\AC\MicrosoftEdge\Cache\*",
+        $Outlook_Temp = "$env:LOCALAPPDATA\Microsoft\Outlook\RoamCache",
+        $Epic_Games_Temp1 = "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache",
+        $Epic_Games_Temp2 = "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache_4147",
+        $Epic_Games_Temp3 = "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache_4430",
+        $Adobe_Premiere_Pro_Temp = "C:\Users\$Usuario\AppData\Roaming\Adobe\Common\Media Cache Files",
+        $Photoshop_Logs_Temp = "C:\Users\$Usuario\AppData\Roaming\Adobe\Adobe Photoshop*\Logs",
+        $Opera_Temp1 = "C:\Users\" + $Usuario +"\AppData\Roaming\Opera Software\Opera Stable",
+        $Opera_Temp2 = "$env:LOCALAPPDATA\Opera Software\Opera Stable\Default\Cache\Cache_Data",
+        $Net_Temp = "$env:LOCALAPPDATA\\Microsoft\Windows\INetCache",
+        $SystemRoot_Temp = "C:\Windows\Temp",
+        $WindowsUpdate_Downloads_Temp = "C:\Windows\SoftwareDistribution\Download",
+        $CrashDump_Temp = "$env:LOCALAPPDATA\CrashDumps"
     )
 
     $directories | ForEach-Object { if (Test-Path -Path $_) { LimpiarDirectorio $_ } }
