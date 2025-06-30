@@ -42,6 +42,10 @@ Current version: 2.4
 - Some cleaning operations may require confirmation or take some time to execute.
 - This program may affect the system to a certain extent since by deleting cache data the applications may take longer to run or certain errors may occur. In case of any error due to deleting cache, notify in issues.
 
+## Real Result
+<img src="https://github.com/user-attachments/assets/e745f32b-8642-4a5f-8830-caf6939e0113" alt="Result">
+
+
 ## Author
 
 This script was authored by ``Ikkxeer``
