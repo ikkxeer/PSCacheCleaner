@@ -45,6 +45,15 @@ Current version: 2.4
 ## Real Result
 <img src="https://github.com/user-attachments/assets/e745f32b-8642-4a5f-8830-caf6939e0113" alt="Result">
 
+## Star History
+
+<a href="https://www.star-history.com/?repos=ikkxeer%2FPSCacheCleaner&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=ikkxeer/PSCacheCleaner&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=ikkxeer/PSCacheCleaner&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=ikkxeer/PSCacheCleaner&type=date&legend=top-left" />
+ </picture>
+</a>
 
 ## Author
 
