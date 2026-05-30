@@ -56,8 +56,101 @@ $global:Contador = 0
 
 # Usuario Actual
 $Usuario = $Env:USERNAME
+$UserProfile = $Env:USERPROFILE
+
+function Remove-PathFiles {
+    param(
+        [Parameter(Mandatory = $true)][string]$Path
+    )
+    Get-ChildItem -Path $Path -Force -Recurse -ErrorAction SilentlyContinue -File | ForEach-Object {
+        try {
+            Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue
+            Write-Host "Archivo eliminado: $($_.FullName)" -ForegroundColor Green
+            $global:Contador += 1
+        }
+        catch {
+        }
+    }
+}
+
+function CleanPathIfExists {
+    param(
+        [Parameter(Mandatory = $true)][string]$Path
+    )
+    if (Test-Path -Path $Path) {
+        Remove-PathFiles -Path $Path
+    }
+}
+
+function CleanAppPaths {
+    param(
+        [Parameter(Mandatory = $true)][string]$PackageName,
+        [Parameter(Mandatory = $true)][string[]]$Paths
+    )
+    if (Get-Package $PackageName -ErrorAction SilentlyContinue) {
+        foreach ($Path in $Paths) {
+            CleanPathIfExists -Path $Path
+        }
+    }
+}
 
 # Directorios a vaciar
+$CleanupPaths = @(
+    'C:\Windows\Prefetch',
+    'C:\Windows\SoftwareDistribution',
+    [System.IO.Path]::GetTempPath(),
+    'C:\Windows\Temp',
+    'C:\Windows\System32\spool\PRINTERS',
+    "$UserProfile\AppData\LocalLow\NVIDIA\PerDriverVersion\DXCache",
+    "$env:LOCALAPPDATA\Microsoft\Windows\INetCache",
+    "$env:LOCALAPPDATA\Packages\Microsoft.MicrosoftEdge*\AC\MicrosoftEdge\Cache\*",
+    'C:\Windows\SoftwareDistribution\Download',
+    "$env:LOCALAPPDATA\CrashDumps",
+    "$env:LOCALAPPDATA\Microsoft\Outlook\RoamCache",
+    "$UserProfile\AppData\Roaming\Adobe\Common\Media Cache Files",
+    "$UserProfile\AppData\Roaming\Adobe\Adobe Photoshop*\Logs"
+)
+
+$DiscordPaths = @(
+    "$UserProfile\AppData\Roaming\discord\Code Cache",
+    "$UserProfile\AppData\Roaming\discord\Cache",
+    "$UserProfile\AppData\Roaming\discord\GPUCache"
+)
+
+$SpotifyPaths = @(
+    "$env:LOCALAPPDATA\Spotify\Storage"
+)
+
+$EpicGamesPaths = @(
+    "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache",
+    "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache_4147",
+    "$env:LOCALAPPDATA\EpicGamesLauncher\Saved\webcache_4430"
+)
+
+$OperaPaths = @(
+    "$UserProfile\AppData\Roaming\Opera Software\Opera Stable",
+    "$env:LOCALAPPDATA\Opera Software\Opera Stable\Default\Cache\Cache_Data"
+)
+
+$ChromePaths = @(
+    "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache\*",
+    "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache2\entries\*",
+    "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies",
+    "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Media Cache",
+    "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies-Journal"
+)
+
+$MozillaFirefoxPaths = @(
+    "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cache\*",
+    "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cache\*.*",
+    "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cache2\entries\*.*",
+    "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\thumbnails\*",
+    "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\cookies.sqlite",
+    "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\webappsstore.sqlite",
+    "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\chromeappsstore.sqlite",
+    "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles\*.default*\chromeappsstore.sqlite"
+)
+
 $Prefetch_Path = 'C:\Windows\Prefetch'
 $Software_Distribution = 'C:\Windows\SoftwareDistribution'
 $Directorio_Temporal = [System.IO.Path]::GetTempPath()
@@ -95,260 +188,19 @@ $SystemRoot_Temp = "C:\Windows\Temp"
 $WindowsUpdate_Downloads_Temp = "C:\Windows\SoftwareDistribution\Download"
 $CrashDump_Temp = "$env:LOCALAPPDATA\CrashDumps"
 
-# Función para contar archivos eliminados
-function LimpiarDirectorio ($ruta) {
-    $carpeta = Get-ChildItem -Path $Ruta
-    foreach ($elemento in $carpeta) {
-        # Si es un archivo, lo eliminamos y mostramos un mensaje
-        if ($elemento.PSIsContainer -eq $false) {
-            try {
-                Remove-Item -Path $elemento.FullName -Force -ErrorAction SilentlyContinue
-                Write-Host "Archivo eliminado: $($elemento.FullName)" -ForegroundColor Green
-                $global:Contador += 1
-            }
-            catch {
-            }
-        }
-        # Si es una carpeta, llamamos a la función recursivamente para eliminar archivos dentro de la carpeta
-        else {
-            LimpiarDirectorio -Ruta $elemento.FullName
-        }
-    }
-}
-
 Write-Host "--- ARCHIVOS ELIMINADOS ---" -BackgroundColor Yellow -ForegroundColor Black
 Write-Host " "
 
-# Limpiar los directorios especificados
-# Prefetch
-$Exists = Test-Path -Path $Prefetch_Path
-if ($Exists) {
-    LimpiarDirectorio $Prefetch_Path
-}
-else {
+foreach ($Path in $CleanupPaths) {
+    CleanPathIfExists -Path $Path
 }
 
-# Software Distribution
-$Exists = Test-Path -Path $Software_Distribution
-if ($Exists) {
-    LimpiarDirectorio $Software_Distribution
-}
-else {
-}
-
-# Nvidia Temp
-$Exists = Test-Path -Path $Nvidia_Temp
-if ($Exists) {
-    LimpiarDirectorio $Nvidia_Temp
-}
-else {
-}
-
-# Edge Temp
-$Exists = Test-Path -Path $Edge_Temp
-if ($Exists) {
-    LimpiarDirectorio $Edge_Temp
-}
-else {
-}
-
-# Temp
-$Exists = Test-Path -Path $Directorio_Temporal
-if ($Exists) {
-    LimpiarDirectorio $Directorio_Temporal
-}
-else {
-}
-
-# Crash Dump Temp
-$Exists = Test-Path -Path $CrashDump_Temp
-if ($Exists) {
-    LimpiarDirectorio $CrashDump_Temp
-}
-else {
-}
-
-# System Root Temp
-$Exists = Test-Path -Path $SystemRoot_Temp
-if ($Exists) {
-    LimpiarDirectorio $SystemRoot_Temp
-}
-else {
-}
-
-# Net Temp
-$Exists = Test-Path -Path $Net_Temp
-if ($Exists) {
-    LimpiarDirectorio $Net_Temp
-}
-else {
-}
-
-# Windows Update Downloads Temp
-$Exists = Test-Path -Path $WindowsUpdate_Downloads_Temp
-if ($Exists) {
-    LimpiarDirectorio $WindowsUpdate_Downloads_Temp
-}
-else {
-}
-
-# Printers temp
-$Exists = Test-Path -Path $Printers_Temp
-if ($Exists) {
-    LimpiarDirectorio $Printers_Temp
-}
-else {
-}
-
-# Temp
-$Exists = Test-Path -Path $Directorio_Temporal2
-if ($Exists) {
-    LimpiarDirectorio $Directorio_Temporal2
-}
-else {
-}
-
-# Discord
-$DiscordIsInstalled = Get-Package Discord -ErrorAction SilentlyContinue
-$Exists1 = Test-Path -Path $Discord_Temp1
-$Exists2 = Test-Path -Path $Discord_Temp2
-$Exists3 = Test-Path -Path $Discord_Temp3
-if ($DiscordIsInstalled) {
-    if ($Exists1) {
-        LimpiarDirectorio $Discord_Temp1
-    }
-    if ($Exists2) {
-        LimpiarDirectorio $Discord_Temp1
-    }
-    if ($Exists3) {
-        LimpiarDirectorio $Discord_Temp1
-    }
-}
-else {
-}
-
-# Spotify
-$SpotifyIsInstalled = Get-Package "Spotify*" -ErrorAction SilentlyContinue
-$Exists = Test-Path -Path $Spotify_Temp
-if ($SpotifyIsInstalled) {
-    if ($Exists) {
-        LimpiarDirectorio $Spotify_Temp
-    }
-}
-else {
-}
-
-# Epic Games
-$EpicGamesIsInstalled = Get-Package "Epic Games*" -ErrorAction SilentlyContinue
-$Exists1 = Test-Path -Path $Epic_Games_Temp1
-$Exists2 = Test-Path -Path $Epic_Games_Temp2
-$Exists3 = Test-Path -Path $Epic_Games_Temp3
-if ($EpicGamesIsInstalled) {
-    if ($Exists1) {
-        LimpiarDirectorio $Epic_Games_Temp1
-    }
-    if ($Exists2) {
-        LimpiarDirectorio $Epic_Games_Temp2
-    }
-    if ($Exists3) {
-        LimpiarDirectorio $Epic_Games_Temp3
-    }
-}
-else {
-}
-
-# Opera
-$EpicGamesIsInstalled = Get-Package "Opera*" -ErrorAction SilentlyContinue
-$Exists1 = Test-Path -Path $Opera_Temp1
-$Exists2 = Test-Path -Path $Opera_Temp2
-if ($EpicGamesIsInstalled) {
-    if ($Exists1) {
-        LimpiarDirectorio $Opera_Temp1
-    }
-    if ($Exists2) {
-        LimpiarDirectorio $Opera_Temp2
-    }
-}
-else {
-}
-
-# Outlook
-$Exists = Test-Path -Path $Outlook_Temp
-if ($Exists) {
-    LimpiarDirectorio $Outlook_Temp
-}
-else {
-}
-
-# Google Chrome
-$GoogleChromeIsInstalled = Get-Package "Google Chrome*" -ErrorAction SilentlyContinue
-$Exists1 = Test-Path -Path $Chrome_Temp1
-$Exists2 = Test-Path -Path $Chrome_Temp2
-$Exists3 = Test-Path -Path $Chrome_Temp3
-$Exists4 = Test-Path -Path $Chrome_Temp4
-$Exists5 = Test-Path -Path $Chrome_Temp5
-if ($GoogleChromeIsInstalled) {
-    if ($Exists1) {
-        LimpiarDirectorio $Chrome_Temp1
-    }
-    if ($Exists2) {
-        LimpiarDirectorio $Chrome_Temp2
-    }
-    if ($Exists3) {
-        LimpiarDirectorio $Chrome_Temp3
-    }
-    if ($Exists4) {
-        LimpiarDirectorio $Chrome_Temp4
-    }
-    if ($Exists5) {
-        LimpiarDirectorio $Chrome_Temp5
-    }
-    } 
-else {
-}
-
-# Adobe Premiere Pro
-$Exists = Test-Path -Path $Adobe_Premiere_Pro_Temp
-if ($Exists) {
-    LimpiarDirectorio $Adobe_Premiere_Pro_Temp
-}
-else {
-}
-
-# Adobe Premiere Pro
-$Exists = Test-Path -Path $Photoshop_Logs_Temp
-if ($Exists) {
-    LimpiarDirectorio $Photoshop_Logs_Temp
-}
-else {
-}
-
-# Adobe Ilustrator
-$Exists = Test-Path -Path $Photoshop_Logs_Temp
-if ($Exists) {
-    LimpiarDirectorio $Photoshop_Logs_Temp
-}
-else {
-}
-
-# Mozilla Firefox
-$MozillaFirefoxIsInstalled = Get-Package "Mozilla Firefox*" -ErrorAction SilentlyContinue
-$Exists1 = Test-Path -Path $Mozilla_Firefox_Temp1
-$Exists2 = Test-Path -Path $Mozilla_Firefox_Temp2 
-$Exists3 = Test-Path -Path $Mozilla_Firefox_Temp3
-$Exists4 = Test-Path -Path $Mozilla_Firefox_Temp4
-$Exists5 = Test-Path -Path $Mozilla_Firefox_Temp5
-$Exists6 = Test-Path -Path $Mozilla_Firefox_Temp6
-$Exists7 = Test-Path -Path $Mozilla_Firefox_Temp7
-$Exists8 = Test-Path -Path $Mozilla_Firefox_Temp8
-if ($MozillaFirefoxIsInstalled) {
-    for ($i = 1; $i -le 8; $i++) {
-        $tempPath = Get-Variable -Name "Mozilla_Firefox_Temp$i" -ValueOnly
-        if (Test-Path -Path $tempPath) {
-            LimpiarDirectorio $tempPath
-        }
-    }
-¡}
+CleanAppPaths -PackageName 'Discord' -Paths $DiscordPaths
+CleanAppPaths -PackageName 'Spotify*' -Paths $SpotifyPaths
+CleanAppPaths -PackageName 'Epic Games*' -Paths $EpicGamesPaths
+CleanAppPaths -PackageName 'Opera*' -Paths $OperaPaths
+CleanAppPaths -PackageName 'Google Chrome*' -Paths $ChromePaths
+CleanAppPaths -PackageName 'Mozilla Firefox*' -Paths $MozillaFirefoxPaths
 
 Write-Host " "
 Write-Host "Se han eliminado un total de $Contador archivos!" -BackgroundColor Green -ForegroundColor Black
