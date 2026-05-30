@@ -1,4 +1,4 @@
-$Version = 2.4
+﻿$Version = 2.4
 
 Clear-Host # Limpiar ventana al iniciar
 
@@ -21,17 +21,32 @@ Write-Host @"
 "@ -ForegroundColor Yellow
 Write-Host " "
 
+function Show-ProgressSimple {
+    param(
+        [string]$Activity,
+        [string]$Status,
+        [int]$PercentComplete
+    )
+    Write-Progress -Activity $Activity -Status $Status -PercentComplete $PercentComplete
+}
+
 # Instalación de modulos
+Show-ProgressSimple -Activity "Instalación de módulos" -Status "Verificando PSWindowsUpdate" -PercentComplete 0
 $IsInstalled = Get-InstalledModule PSWindowsUpdate
 if ($IsInstalled) {
+    Show-ProgressSimple -Activity "Instalación de módulos" -Status "PSWindowsUpdate ya está instalado" -PercentComplete 100
     Write-Host "PSWindowsUpdate ya está instalado en el sistema!" -ForegroundColor Green
     Write-Host " "
+    Write-Progress -Activity "Instalación de módulos" -Completed
 }
 else {
     try {
+        Show-ProgressSimple -Activity "Instalación de módulos" -Status "Instalando PSWindowsUpdate" -PercentComplete 25
         Install-Module PSWindowsUpdate -Force
+        Show-ProgressSimple -Activity "Instalación de módulos" -Status "Instalación completada" -PercentComplete 100
         Write-Host "El modulo PSWindowsUpdate se ha instalado correctamente en el sistema!" -ForegroundColor Green
         Write-Host " "
+        Write-Progress -Activity "Instalación de módulos" -Completed
     }
     catch {
         Write-Host "EL modulo PSWindowsUpdate no se ha podido instalar correctamente..." -ForegroundColor Red
@@ -42,7 +57,10 @@ else {
 
 # Optimizar y defragmentar disco C
 try {
+    Show-ProgressSimple -Activity "Optimización de disco" -Status "Optimizando disco C:\" -PercentComplete 0
     Optimize-Volume -DriveLetter C -Defrag -ReTrim -SlabConsolidate -TierOptimize
+    Show-ProgressSimple -Activity "Optimización de disco" -Status "Optimización completada" -PercentComplete 100
+    Write-Progress -Activity "Optimización de disco" -Completed
     Write-Host "Se ha optimizado de forma exitosa el disco C:\!" -ForegroundColor Green
     Write-Host " "
 }
@@ -191,16 +209,27 @@ $CrashDump_Temp = "$env:LOCALAPPDATA\CrashDumps"
 Write-Host "--- ARCHIVOS ELIMINADOS ---" -BackgroundColor Yellow -ForegroundColor Black
 Write-Host " "
 
-foreach ($Path in $CleanupPaths) {
-    CleanPathIfExists -Path $Path
+for ($i = 0; $i -lt $CleanupPaths.Count; $i++) {
+    $currentPath = $CleanupPaths[$i]
+    $percent = [int](($i + 1) / $CleanupPaths.Count * 100)
+    Show-ProgressSimple -Activity "Eliminando archivos temporales" -Status "Procesando $currentPath" -PercentComplete $percent
+    CleanPathIfExists -Path $currentPath
 }
+Write-Progress -Activity "Eliminando archivos temporales" -Completed
 
+Show-ProgressSimple -Activity "Eliminando caché de aplicaciones" -Status "Verificando Discord" -PercentComplete 0
 CleanAppPaths -PackageName 'Discord' -Paths $DiscordPaths
+Show-ProgressSimple -Activity "Eliminando caché de aplicaciones" -Status "Verificando Spotify" -PercentComplete 20
 CleanAppPaths -PackageName 'Spotify*' -Paths $SpotifyPaths
+Show-ProgressSimple -Activity "Eliminando caché de aplicaciones" -Status "Verificando Epic Games" -PercentComplete 40
 CleanAppPaths -PackageName 'Epic Games*' -Paths $EpicGamesPaths
+Show-ProgressSimple -Activity "Eliminando caché de aplicaciones" -Status "Verificando Opera" -PercentComplete 60
 CleanAppPaths -PackageName 'Opera*' -Paths $OperaPaths
+Show-ProgressSimple -Activity "Eliminando caché de aplicaciones" -Status "Verificando Google Chrome" -PercentComplete 80
 CleanAppPaths -PackageName 'Google Chrome*' -Paths $ChromePaths
+Show-ProgressSimple -Activity "Eliminando caché de aplicaciones" -Status "Verificando Mozilla Firefox" -PercentComplete 100
 CleanAppPaths -PackageName 'Mozilla Firefox*' -Paths $MozillaFirefoxPaths
+Write-Progress -Activity "Eliminando caché de aplicaciones" -Completed
 
 Write-Host " "
 Write-Host "Se han eliminado un total de $Contador archivos!" -BackgroundColor Green -ForegroundColor Black
@@ -210,47 +239,61 @@ Write-Host "--------------------------------------------------------------------
 Write-Host " "
 
 # Ejecutar y limpiar Disk Clean up tool
+Show-ProgressSimple -Activity "Disk Cleanup" -Status "Iniciando cleanmgr" -PercentComplete 0
 Write-host "El proceso de cleanmgr ha comenzado correctamente en segundo plano!" -ForegroundColor Green
 Start-Process cleanmgr -ArgumentList "/verylowdisk /autoclean" -NoNewWindow
+Show-ProgressSimple -Activity "Disk Cleanup" -Status "Esperando a que termine cleanmgr" -PercentComplete 50
 Start-Sleep -Seconds 15
 Stop-Process -Name cleanmgr -ErrorAction SilentlyContinue
+Show-ProgressSimple -Activity "Disk Cleanup" -Status "Tarea completada" -PercentComplete 100
+Write-Progress -Activity "Disk Cleanup" -Completed
 Write-Host " "
 Write-Host "Se ha ejecutado con exito la herramienta de Disk Clean de Windows!" -BackgroundColor Green -ForegroundColor Black
 Write-Host " "
 
 # Limpiar caché Microsoft Store
+Show-ProgressSimple -Activity "Microsoft Store" -Status "Iniciando limpieza de caché" -PercentComplete 0
 Write-Host "Limpiando caché de Microsoft Store..." -ForegroundColor Yellow
 Write-Host " "
 try {
     Start-Process -FilePath "WSReset.exe"
+    Show-ProgressSimple -Activity "Microsoft Store" -Status "Esperando cierre de Store" -PercentComplete 50
     Write-Host "En 5 segundos se cerrará la ventana de Microsoft Store..." -ForegroundColor Yellow
     Write-Host " "
     Start-Sleep -Seconds 8
     try {
         Stop-Process -name "WinStore.App" -Force
+        Show-ProgressSimple -Activity "Microsoft Store" -Status "Limpieza completada" -PercentComplete 100
+        Write-Progress -Activity "Microsoft Store" -Completed
         Write-Host "Se ha cerrado la ventana de la Microsoft Store correctamente!" -ForegroundColor Green
         Write-Host " "
     }
     catch {
+        Write-Progress -Activity "Microsoft Store" -Completed
         Write-Host "No se ha podido cerrar correctamente la ventana de la Microsoft Store o no se ha abierto..." -ForegroundColor Red
 
     }
 }
 catch {
+    Write-Progress -Activity "Microsoft Store" -Completed
     Write-Host "No se ha podido limpiar el caché de Microsoft Store correctamente..." -ForegroundColor Red
 }
 
 # Limpiar caché DNS
+Show-ProgressSimple -Activity "Limpiar DNS" -Status "Iniciando vaciado de caché DNS" -PercentComplete 0
 Write-Host "Limpiando caché de DNS..." -ForegroundColor Yellow
 Write-Host " "
 Start-Sleep -Seconds 2
 try {
     ipconfig /flushdns
+    Show-ProgressSimple -Activity "Limpiar DNS" -Status "Caché DNS vaciado" -PercentComplete 100
+    Write-Progress -Activity "Limpiar DNS" -Completed
     Write-Host " "
     Write-Host "Se ha limpiado el caché DNS correctamente!" -ForegroundColor Green
     Write-Host " "
 }
 catch {
+    Write-Progress -Activity "Limpiar DNS" -Completed
     Write-Host "No se ha podido limpiar correctamente el caché DNS..." -ForegroundColor Red
     Write-Host " "
 }
