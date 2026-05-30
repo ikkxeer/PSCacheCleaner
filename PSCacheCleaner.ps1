@@ -10,6 +10,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
   Break
 }
 
+# Banner principal del programa
 Write-Host @"
     ____  _____ ______           __         ________                          
    / __ \/ ___// ____/___ ______/ /_  ___  / ____/ /__  ____ _____  ___  _____
@@ -341,45 +342,19 @@ $Exists6 = Test-Path -Path $Mozilla_Firefox_Temp6
 $Exists7 = Test-Path -Path $Mozilla_Firefox_Temp7
 $Exists8 = Test-Path -Path $Mozilla_Firefox_Temp8
 if ($MozillaFirefoxIsInstalled) {
-    if ($Exists1) {
-        LimpiarDirectorio $Mozilla_Firefox_Temp1
+    for ($i = 1; $i -le 8; $i++) {
+        $tempPath = Get-Variable -Name "Mozilla_Firefox_Temp$i" -ValueOnly
+        if (Test-Path -Path $tempPath) {
+            LimpiarDirectorio $tempPath
+        }
     }
-    if ($Exists2) {
-        LimpiarDirectorio $Mozilla_Firefox_Temp2
-    }
-    if ($Exists3) {
-        LimpiarDirectorio $Mozilla_Firefox_Temp3
-    }
-    if ($Exists4) {
-        LimpiarDirectorio $Mozilla_Firefox_Temp4
-    }
-    if ($Exists5) {
-        LimpiarDirectorio $Mozilla_Firefox_Temp5
-    }
-    if ($Exists6) {
-        LimpiarDirectorio $Mozilla_Firefox_Temp6
-    }
-    if ($Exists7) {
-        LimpiarDirectorio $Mozilla_Firefox_Temp7
-    }
-    if ($Exists8) {
-        LimpiarDirectorio $Mozilla_Firefox_Temp8
-    }
-}
+¡}
 
 Write-Host " "
 Write-Host "Se han eliminado un total de $Contador archivos!" -BackgroundColor Green -ForegroundColor Black
 Write-Host " "
 
 Write-Host "---------------------------------------------------------------------------" -BackgroundColor Yellow -ForegroundColor Black
-Write-Host " "
-
-# Limpiar visor de eventos
-Write-Host "Limpiando el visor de eventos..." -ForegroundColor Yellow
-Write-Host " "
-wevtutil el | Foreach-Object {wevtutil cl "$_"} -ErrorAction SilentlyContinue
-Write-Host " "
-Write-Host "El visor de eventos se ha limpiado correctamente!" -ForegroundColor Green
 Write-Host " "
 
 # Ejecutar y limpiar Disk Clean up tool
@@ -457,7 +432,7 @@ else {
 }
 
 # Actualizar apps
-$DecisionActualizarApps = Read-Host "Quieres actualizar aplicaciones de tu ordenador? (Y/N)"
+$DecisionActualizarApps = Read-Host "Quieres actualizar aplicaciones de tu ordenador? (Winget) (Y/N)"
 Write-Host " "
 
 if ($DecisionActualizarApps.ToLower() -eq "y") {
