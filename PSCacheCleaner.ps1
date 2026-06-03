@@ -324,6 +324,116 @@ else {
     Write-Host " "
 }
 
+Show-ProgressSimple -Activity "Programas de inicio" -Status "Revisando programas de arranque" -PercentComplete 0
+Write-Host "Revisando programas de arrancada de inicio de Windows..." -ForegroundColor Yellow
+Write-Host ""
+
+while ($true) {
+
+    # Lista de programas de arrancada de inicio de Windows habilitados
+    $programasActivos = @()
+
+    # Claves de registro de Windows de programas de arrancada de inicio
+    $claves = @(
+        "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
+        "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"
+    )
+
+    # Recorrer las claves de registro de Windows de programas de arrancada de inicio
+    foreach ($clave in $claves) {
+
+        # Comprobar si la clave de registro existe
+        if (Test-Path $clave) {
+
+            # Obtener las propiedades de la clave de registro
+            $propiedades = (Get-ItemProperty $clave).PSObject.Properties |
+                Where-Object {
+                    $_.Name -notmatch '^PS' -and
+                    $_.Value -is [byte[]]
+                }
+
+            # Recorrer las propiedades de la clave de registro
+            foreach ($propiedad in $propiedades) {
+
+                # Si el valor de la propiedad es 0x02 = Habilitado
+                if ($propiedad.Value[0] -eq 2) {
+
+                    # Añadir el programa de arrancada de inicio a la lista de programas activos
+                    $programasActivos += [PSCustomObject]@{
+                        Nombre = $propiedad.Name
+                        Ruta   = $clave
+                    }
+                }
+            }
+        }
+    }
+
+    # Comprobar si hay programas de arrancada de inicio de Windows habilitados
+    if ($programasActivos.Count -eq 0) {
+        Write-Host "No hay programas de inicio habilitados." -ForegroundColor Yellow
+        break
+    }
+
+    Write-Host "PROGRAMAS DE INICIO" -ForegroundColor Cyan
+    Write-Host ""
+
+    # Recorrer la lista de programas de arrancada de inicio de Windows habilitados
+    for ($i = 0; $i -lt $programasActivos.Count; $i++) {
+        Write-Host "$($i + 1). $($programasActivos[$i].Nombre)"
+    }
+
+    Write-Host "0. Salir"
+    Write-Host ""
+
+    # Leer la opción seleccionada por el usuario
+    $opcion = Read-Host "Seleccione un programa para deshabilitar"
+
+    # Comprobar si la opción seleccionada es 0
+    if ($opcion -eq "0") {
+        break
+    }
+
+    # Comprobar si la opción seleccionada es un número
+    if (-not ($opcion -as [int])) {
+        continue
+    }
+
+    $indice = [int]$opcion - 1
+
+    if ($indice -lt 0 -or $indice -ge $programasActivos.Count) {
+        continue
+    }
+
+    $programa = $programasActivos[$indice]
+
+    Write-Host ""
+    $confirmacion = Read-Host "¿Deshabilitar '$($programa.Nombre)'? (S/N)"
+
+    if ($confirmacion -match '^[Ss]$') {
+
+        $valorDeshabilitado = [byte[]](
+            0x03,0x00,0x00,0x00,
+            0x00,0x00,0x00,0x00,
+            0x00,0x00,0x00,0x00
+        )
+
+        Set-ItemProperty `
+            -Path $programa.Ruta `
+            -Name $programa.Nombre `
+            -Value $valorDeshabilitado
+
+        Write-Host ""
+        Write-Host "Programa deshabilitado correctamente." -ForegroundColor Green
+    }
+
+    Write-Host ""
+    Read-Host "Pulse ENTER para continuar"
+}
+
+Write-Progress -Activity "Programas de inicio" -Completed
+
+Write-Host " "
+
 # Actualizar apps
 $DecisionActualizarApps = Read-Host "Quieres actualizar aplicaciones de tu ordenador? (Winget) (Y/N)"
 Write-Host " "
