@@ -1,6 +1,4 @@
-﻿$Version = 2.4
-
-Clear-Host # Limpiar ventana al iniciar
+﻿Clear-Host # Limpiar ventana al iniciar
 
 # Elevación a Administrador
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
