@@ -22,6 +22,9 @@ Current version: 2.4
 .\PSCacheCleaner.ps1
 ````
 
+## Easy to use
+This program is very easy to use, thanks mainly to its language, PowerShell. It runs directly on the computer in a simple way; there's nothing to install, everything is automated, and you don't need to modify anything.
+
 ## Features
 
 1. Installation of PSWindowsUpdate module if not already installed.
